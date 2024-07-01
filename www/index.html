@@ -13,14 +13,11 @@
     <img src="cat.jpeg" alt="고먐밈">
     <a href="pages/page.html">page</a>
     <button id="openPopupBtn1">Post Method</button>
-    <button id="openPopupBtn2">File Upload</button>
-    <button id="openPopupBtn3">CGI</button>
-    <button id="openPopupBtn4" onclick="openPopup()">POST TEST</button>
 
     <!-- Popup structures -->
     <div id="popup1" class="popup-background">
         <div class="popup-content">
-            <button class="close-btn">&times;</button>
+            <button class="close-btn" onclick="closePopup()">&times;</button>
             <h2>Post Method</h2>
             <form action="/index.py" method="post">
                 <input id="name" type="text" name="name" placeholder="name">
@@ -30,43 +27,14 @@
         </div>
     </div>
 
-    <div id="popup2" class="popup-background">
-        <div class="popup-content">
-            <button class="close-btn">&times;</button>
-            <h2>File Upload</h2>
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" name="profile">
-                <input type="submit">
-            </form>
-        </div>
-    </div>
-
-    <div id="popup3" class="popup-background">
-        <div class="popup-content">
-            <button class="close-btn">&times;</button>
-            <h2>CGI</h2>
-            <form action="http://localhost/upload.php" method="post" enctype="multipart/form-data">
-                <input type="file" name="profile">
-                <input type="submit">
-            </form>
-        </div>
-    </div>
-
-	<div id="popup4" class="popup-background">
-        <div class="popup-content">
-            <button class="close-btn" onclick="closePopup()">&times;</button>
-            <h2>Post Method</h2>
-            <form id="uploadForm">
-                <input id="filename" type="text" name="filename" placeholder="Filename">
-                <textarea id="filecontent" name="filecontent" placeholder="File Content"></textarea>
-                <button type="button" onclick="submitForm()">Submit</button>
-            </form>
-        </div>
-    </div>
-
     <img src="http://picsum.photos/1920" alt="랜덤 이미지">
     <script src="script/script.js"></script>
     <script>
+
+        function closePopup() {
+            document.getElementById('popup1').style.display = 'none';
+        }
+
         document.getElementById('myForm').addEventListener('submit', function(event)
         {
             event.preventDefault(); // 기본 폼 제출을 막음
@@ -84,46 +52,6 @@
             // 폼을 다시 제출
             this.submit();
         });
-
-		function openPopup() {
-            document.getElementById('popup4').style.display = 'flex';
-        }
-
-        function closePopup() {
-            document.getElementById('popup4').style.display = 'none';
-        }
-
-		async function submitForm() {
-            const filename = document.getElementById('filename').value;
-            const filecontent = document.getElementById('filecontent').value;
-
-            if (!filename || !filecontent) {
-                alert('Filename and file content are required');
-                return;
-            }
-
-            const headers = new Headers();
-            headers.append('Content-Type', 'text/plain');
-            headers.append('Content-Disposition', `attachment; filename="${filename}"`);
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    headers: headers,
-                    body: filecontent
-                });
-
-                if (response.ok) {
-                    alert('File uploaded successfully');
-                } else {
-                    alert('Failed to upload file');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while uploading the file');
-            }
-        };
     </script>
 </body>
 </html>
-aaaaaaaaaa

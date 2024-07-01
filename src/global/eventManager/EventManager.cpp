@@ -69,9 +69,6 @@ std::vector<struct kevent> EventManager::getCurrentEvents()
      */
     struct kevent events[1024];
     int numEvents = kevent(kq, NULL, 0, events, 1024, &timeout);
-    // NOTE: cgi_interpreter 경로가 올바르지 않으면 errno(9) bad file descripter 반환됨 왜이럼???????
-    // 예상 이유: addEvent할 때 에러가 아예 빼서 그런듯? 뺀 이유는 eventGarbageCollector 때문임!!!!!!!!!!!!!!!!!!!!!
-    // 안준성이 만듬 당신이 해
     if (numEvents == -1)
     {
         throw SysException(FAILED_TO_GET_KEVENT);

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webserv</title>
+    <link rel="stylesheet" href="style/reset.css">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <h1>webserv</h1>
+    <p>웹 서버입니다.</p>
+    <img src="cat.jpeg" alt="고먐밈">
+    <a href="pages/page.html">page</a>
+    <button id="openPopupBtn4" onclick="openPopup()">Upload File</button>
+
+    <!-- Popup structures -->
+	<div id="popup4" class="popup-background">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">&times;</button>
+            <h2>upload file</h2>
+            <form id="uploadForm">
+                <input id="filename" type="text" name="filename" placeholder="Filename">
+                <textarea id="filecontent" name="filecontent" placeholder="File Content"></textarea>
+                <button type="button" onclick="submitForm()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <img src="http://picsum.photos/1920" alt="랜덤 이미지">
+    <script src="script/script.js"></script>
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(event)
+        {
+            event.preventDefault(); // 기본 폼 제출을 막음
+
+            // 폼 데이터 수집
+            var name = document.getElementById('name').value;
+            var age = document.getElementById('age').value;
+
+            // 쿼리 스트링 생성
+            var queryString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}`;
+
+            // 폼의 action 속성에 쿼리 스트링 추가
+            this.action = `/index.py?${queryString}`;
+
+            // 폼을 다시 제출
+            this.submit();
+        });
+
+		function openPopup() {
+            document.getElementById('popup4').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup4').style.display = 'none';
+        }
+
+		async function submitForm() {
+            const filename = document.getElementById('filename').value;
+            const filecontent = document.getElementById('filecontent').value;
+
+            if (!filename || !filecontent) {
+                alert('Filename and file content are required');
+                return;
+            }
+
+            const headers = new Headers();
+            headers.append('Content-Type', 'text/plain');
+            headers.append('Content-Disposition', `attachment; filename="${filename}"`);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    headers: headers,
+                    body: filecontent
+                });
+
+                if (response.ok) {
+                    alert('File uploaded successfully');
+                } else {
+                    alert('Failed to upload file');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the file');
+            }
+        };
+    </script>
+</body>
+</html>
+dwdwd

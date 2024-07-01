@@ -13,7 +13,6 @@ private:
 public:
     HttpException(const int statusCode);
     virtual ~HttpException() _NOEXCEPT;
-    virtual const char* what() const _NOEXCEPT;
     int getStatusCode() const;
 };
 

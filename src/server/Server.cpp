@@ -79,7 +79,7 @@ int Server::createServerSocket(ServerConfig serverConfig)
     memset(&serverAddr, 0, sizeof(serverAddr));                           // 0으로 초기화
     serverAddr.sin_family = AF_INET;                                      // IPv4
     serverAddr.sin_port = htons(serverConfig.port);                       // 포트 설정
-    inet_pton(AF_INET, serverConfig.host.c_str(), &serverAddr.sin_addr);  // IP 주소 설정 NOTE: host 검색해보기
+    inet_pton(AF_INET, serverConfig.host.c_str(), &serverAddr.sin_addr);  // IP 주소 설정
 
     if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1)
     {

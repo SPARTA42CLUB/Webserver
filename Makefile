@@ -45,7 +45,6 @@ SRC				:= $(shell find $(SRC_DIR) -name "*.cpp")
 OBJ				:= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 all: $(NAME)
-	@echo "$(FG_GREEN)$(NAME) created successfully$(RESET)"
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CFLAGS) $(OBJ) -o $(NAME)

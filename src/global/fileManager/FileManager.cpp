@@ -6,6 +6,8 @@
 #include "Logger.hpp"
 #include "SysException.hpp"
 
+#include <iostream>
+
 const int NGINX_MAX_FILEPATH = 50;
 
 namespace fileManager
@@ -79,12 +81,13 @@ namespace fileManager
             logger.logError("Failed to open directory");
             return "";
         }
-
         while ((entry = readdir(dir)) != NULL)
         {
             // 경로와 파일명을 결합하여 전체 경로 생성
             std::string dirName(entry->d_name);
-            std::string fullPath = path + "/" + dirName;
+            std::string fullPath = path + (path.back() == '/' ? "" : "/") + dirName;
+
+            std::cout << fullPath << std::endl;
 
             // 파일 상태 정보 얻기
             if (stat(fullPath.c_str(), &statbuf) == -1)
