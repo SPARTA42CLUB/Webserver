@@ -38,7 +38,7 @@ private:
 
     int handleFileUpload(const int fStatus);
     std::string parseContentDisposition(void);
-    bool handleIndex(void);
+    void handleIndex(void);
     int handleAutoindex(void);
 
     void addContentType(void);

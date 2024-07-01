@@ -154,7 +154,7 @@ void Config::verifyConfig(void)
             {
                 locIt->CONFIG.root.pop_back();
             }
-            if (serverConfigs[i].root.empty() && locIt->CONFIG.root.empty())
+            if (serverConfigs[i].root.empty() && locIt->CONFIG.root.empty() && locIt->CONFIG.redirect.empty())
             {
                 throw ConfigException(ROOT_NOT_EXIST);
             }

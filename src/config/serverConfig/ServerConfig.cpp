@@ -85,7 +85,10 @@ void ServerConfig::parseLocation(std::ifstream& file, std::string& locationPath,
         {
             throw e;
         }
-        duplicateCheck[key] = true;
+        if (key != "location")
+        {
+            duplicateCheck[key] = true;
+        }
     }
     locations[locationPath] = locationConfig;
 }

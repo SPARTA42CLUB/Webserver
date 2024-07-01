@@ -1,7 +1,7 @@
 #include "MessageBody.hpp"
 
 MessageBody::MessageBody()
-: mContent()
+: mContent("")
 {
 }
 MessageBody::~MessageBody()

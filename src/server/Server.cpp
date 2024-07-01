@@ -413,7 +413,7 @@ std::string Server::getChunk(Connection& connection)
     size_t chunkEndPos = pos + chunkSize + 2;
     if (chunkEndPos > connection.recvedData.size())
         return ""; // 청크 데이터가 아직 도착하지 않음
-    
+
     connection.recvedData.erase(0, chunkSizeEndPos + 2); // 청크 헤더 제거
 
     RequestMessage* req = connection.reqBuffer;

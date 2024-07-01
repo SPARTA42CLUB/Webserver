@@ -19,6 +19,7 @@ RequestHandler::RequestHandler(std::map<int, Connection*>& connectionsMap, const
 , mbIsCGI(false)
 {
 }
+
 ResponseMessage* RequestHandler::handleRequest(void)
 {
     processRequestPath();
@@ -32,6 +33,7 @@ ResponseMessage* RequestHandler::handleRequest(void)
     }
     catch (const SysException& e)
     {
+        mResponseMessage = new ResponseMessage();
         mResponseMessage->setByStatusCode(SERVICE_UNAVAILABLE, mServerConfig);
         return mResponseMessage;
     }
@@ -69,6 +71,19 @@ bool RequestHandler::matchExactLocation(const std::string& reqTarget, const std:
         return true;
     }
 
+    if (reqTarget.back() == '/')
+    {
+        return false;
+    }
+
+    it = locations.find(reqTarget + "/");
+    if (it != locations.end())
+    {
+        mLocConfig = it->CONFIG;
+        mPath = mLocConfig.root + it->LOCATION;
+        return true;
+    }
+
     return false;
 }
 void RequestHandler::matchClosestLocation(const std::string& reqTarget, const std::map<std::string, LocationConfig>& locations)
@@ -82,11 +97,12 @@ void RequestHandler::matchClosestLocation(const std::string& reqTarget, const st
             mbIsCGI = true;
             return;
         }
-        if (it->LOCATION.back() != '/')
+        size_t matchCnt = 0;
+        size_t trailingSlash = it->LOCATION.size() - (it->LOCATION.back() == '/');
+        if (reqTarget.find(it->LOCATION) == 0 && reqTarget[trailingSlash] == '/')
         {
-            continue;
+            matchCnt = it->LOCATION.size();
         }
-        size_t matchCnt = (reqTarget.find(it->LOCATION) == 0 ? it->LOCATION.size() : 0);
         if (matchCnt > maxMatchCnt)
         {
             maxMatchCnt = matchCnt;
@@ -223,15 +239,18 @@ int RequestHandler::redirect(void)
 }
 int RequestHandler::getRequest(void)
 {
-    if (mPath.back() == '/' && handleIndex() == false && mLocConfig.directory_listing == true)
+    handleIndex();
+    int fStatus = fileManager::getFileStatus(mPath);
+    if (fStatus == fileManager::DIRECTORY && mLocConfig.directory_listing)
         return handleAutoindex();
 
-    if (!fileManager::isExist(mPath))
+    if (fStatus == fileManager::NONE)
     {
         return NOT_FOUND;
     }
+
     std::ifstream file(mPath, std::ios::binary);
-    if (!file.is_open() || fileManager::getFileStatus(mPath) != fileManager::FILE)
+    if (!file.is_open() || fStatus != fileManager::FILE)
     {
         return FORBIDDEN;
     }
@@ -271,11 +290,7 @@ int RequestHandler::postRequest(void)
     // 디렉토리 경로에 `Content-Disposition` 헤더 필드 안으로 filename이 있다면 그 파일명으로 저장
 
     // 디렉토리에 index 붙이기
-    if (mPath.back() == '/')
-    {
-        handleIndex();
-    }
-
+    handleIndex();
     int fStatus = fileManager::getFileStatus(mPath);
     // 디렉토리가 아닐 때, 파일이 존재하면 파일 뒤에 데이터를 추가, 파일이 없으면 파일을 생성하고 데이터를 추가
     if (fStatus != fileManager::DIRECTORY)
@@ -366,28 +381,28 @@ std::string RequestHandler::parseContentDisposition(void)
 }
 int RequestHandler::handleAutoindex()
 {
-    if (fileManager::getFileStatus(mPath) == fileManager::DIRECTORY)
+    const std::string dirList = fileManager::listDirectoryContents(mPath);
+    if (dirList.empty())
     {
-        const std::string dirList = fileManager::listDirectoryContents(mPath);
-        if (dirList.empty())
-        {
-            return FORBIDDEN;
-        }
-        mResponseMessage->setStatusLine(mRequestMessage->getRequestLine().getHTTPVersion(), OK, "OK");
-        mResponseMessage->addMessageBody(dirList);
-        mResponseMessage->addSemanticHeaderFields();
-        return OK;
+        return FORBIDDEN;
     }
-    return NOT_FOUND;
+    mResponseMessage->setStatusLine(mRequestMessage->getRequestLine().getHTTPVersion(), OK, "OK");
+    mResponseMessage->addMessageBody(dirList);
+    mResponseMessage->addSemanticHeaderFields();
+    return OK;
 }
-bool RequestHandler::handleIndex()
+void RequestHandler::handleIndex()
 {
-    if (mLocConfig.index.empty())
+    if (fileManager::getFileStatus(mPath) != fileManager::DIRECTORY || mLocConfig.index.empty())
     {
-        return false;
+        return;
+    }
+    if (mPath.back() != '/')
+    {
+        mPath += "/";
     }
     mPath += mLocConfig.index;
-    return true;
+    return;
 }
 // Connection 헤더 필드 추가
 void RequestHandler::addConnectionHeader(void)

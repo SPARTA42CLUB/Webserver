@@ -27,7 +27,7 @@ Host: localhost$CR
 Connection: close$CR
 Number: 3$CR
 $CR
-" 403
+" 404
 
 "POST / HTTP/1.1$CR
 Host: localhost$CR
@@ -238,21 +238,21 @@ $CR
 "DELETE /upload/test.txt HTTP/1.1$CR
 Host: localhost$CR
 Connection: close$CR
-Number: 29$CR
+Number: 30$CR
 $CR
 " 200
 
 "DELETE /upload/test.txt HTTP/1.1$CR
 Host: localhost$CR
 Connection: close$CR
-Number: 30$CR
+Number: 31$CR
 $CR
 " 404
 
 "DELETE /upload/index.html HTTP/1.1$CR
 Host: localhost$CR
 Connection: close$CR
-Number: 31$CR
+Number: 32$CR
 $CR
 " 200
 )
