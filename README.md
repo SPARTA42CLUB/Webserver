@@ -1,29 +1,76 @@
 # Webserver
-A web server implemented in C++ that conforms to the HTTP/1.1 protocol.
+Webserver는 C++로 작성한 HTTP/1.1을 준수하는 웹 서버 프로그램으로 
 
-## Getting Started
+UNIX 계열 운영체제와 BSD 기반 운영체제에서의 로컬 실행을 지원합니다. 
 
-### System Requirements
-- Install Docker and start the Docker service.
+또한 모든 운영체제에서의 Docker를 통한 실행을 지원합니다. 
 
-### Installation and Run
-1. Clone this respository
+`epoll`(BSD 에서는 `kqueue`)과 논블로킹 I/O를 활용하여 이벤트 기반 다중 클라이언트 서비스를 지원하며, 
 
-	```sh
-	https://github.com/SPARTA42CLUB/Webserver.git
-	cd Webserver
-	```
+GET, POST, UPDATE, DELETE, 청크 요청, CGI 요청과 같은 다양한 요청을 지원합니다. 
 
-2. Run
+사용자는 Config 파일을 통해 다양한 서버 옵션을 설정할 수 있습니다.  
 
-	```sh
-	./run.sh
-	```
-이미 실행 중인 웹서버가 있으면 자동으로 종료하고 재 실행
+## 주요 기능
 
-## After running
-- Stop the web server daemon by running
+- **다양한 HTTP 요청 지원**: \
+GET, POST, UPDATE, DELETE, 청크 요청, CGI 요청 등.
 
-	```
-	./stop.sh
-	```
+- **이벤트 기반 서비스**: \
+`epoll`과 논블로킹 I/O를 사용하여 효율적인 다중 클라이언트 처리.
+
+- **유연한 설정**: \
+Config 파일을 통해 포트, 경로 허용 메소드, 디렉토리 리스트, `client_max_body_size` 등 다양한 옵션 지원.
+
+- **로그 관리**: \
+클라이언트 접속, 요청, 서버 에러 등을 이벤트 등급 별로 로그 파일로 관리하며, `cron`을 활용한 자동 로그 정리 지원.
+
+- **자동화된 테스트**: \
+셸 스크립트를 통한 테스트 자동화 지원.
+
+## 실행 방법
+
+### 시스템 요구사항
+
+1. **UNIX 계열 운영체제 및 BSD 기반 운영체제 (예: macOS)**  
+   - 추가 설정 없이 로컬에서 바로 실행 가능합니다.
+
+2. **그 외의 운영체제 (예: Windows, Linux)**  
+   - Docker 설치가 필요합니다.
+
+### 설치 및 실행
+
+1. **리포지토리 클론**
+
+   ```sh
+   git clone https://github.com/SPARTA42CLUB/Webserver.git
+   cd Webserver
+   ```
+
+2. **실행**
+
+   #### 2.1 로컬 실행 (UNIX 및 BSD 기반 운영체제)
+   ```sh
+   make
+   ./webserv [config파일]
+   ```
+   - `config` 파일을 생략할 경우, 기본 설정 파일로 실행됩니다.
+
+   #### 2.2 Docker 실행 (모든 운영체제)
+   ```sh
+   ./run.sh
+   ```
+   - 이미 실행 중인 Docker 컨테이너가 있으면 자동으로 종료하고 재실행합니다.
+
+3. **접속 방법**
+   - 웹 브라우저를 통해 접속 가능하며, 기본 설정 시 `8080` 포트로 호스팅됩니다.
+
+## 실행 후 작업
+
+Docker로 실행한 경우, 명시적으로 서버를 종료해야 합니다.
+
+- **서버 종료**
+
+   ```sh
+   ./stop.sh
+   ```
